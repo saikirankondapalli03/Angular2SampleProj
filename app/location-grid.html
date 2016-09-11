@@ -1,0 +1,147 @@
+<div class="container-fluid">
+	<div *ngIf="toTrackLocation.length==0" style="padding:50px;text-align:center; font-size:30px; color:#9b9b9b;">
+		Loading...	  
+	</div>
+	<div *ngIf="toTrackLocation.length>0">
+		<div  class="row M0" style="margin-top:20px;margin-bottom:20px;">
+			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-sm-8 col-md-8 col-lg-8">
+				<div class="alert alert-danger" *ngIf="message.id && message.id!=200">
+				  <strong>Error!</strong> {{message.description}}
+				</div>
+				<div class="alert alert-success" *ngIf="message.id == 200">
+				  <strong>Success!</strong> {{message.description}}
+				</div>
+			</div>
+		</div>
+
+		<div  class="row M0" style="margin-top:20px;margin-bottom:20px;">
+			<div class="col-sm-offset-8 col-md-offset-8 col-lg-offset-8 col-sm-2 col-md-2 col-lg-2">
+				<input type="text" class="form-control" [(ngModel)] = "filtertext" (ngModelChange)="searchLocation(filtertext)" placeholder="Search by Component"/>
+			</div>
+		</div>
+		<div class="row M0" style="margin-top:20px;">
+			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-sm-8 col-md-8 col-lg-8">
+				<table *ngIf="toTrackLocation.length>0" class="table table-bordered">
+					<thead>
+						<tr style="background-color:#EFEFEF">
+							<th class="align-cen" (click) = "sortLocation('type')">
+								<span style="padding-right:15px;">
+									Component
+								</span>
+								<span *ngIf= "ascending" class="fa fa-sort-asc" style="cursor:pointer;color:#000000;"></span>
+								<span *ngIf= "!ascending" class="fa fa-sort-desc" style="cursor:pointer;color:#000000;"></span>
+							</th>
+							<th class="align-cen">Length</th>
+							<th class="align-cen">Data Type</th>
+							<th class="align-cen">Delimiter</th>
+							<th class="align-cen"> Action </th>
+						</tr>
+					</thead>
+					<tbody>
+						
+						<tr *ngIf="locationList.length==0">
+							<td colspan="5" style="color:#CCCCCC;font-size: 14px;">
+								No Location component
+							</td>
+						</tr>
+
+						<tr [hidden]="locationList.length==0" *ngFor="let list of locationList; let i = index">
+							<td>
+								<div [hidden] = list.edit>
+									{{list.type | uppercase}}
+								</div>
+								<div [hidden] = !list.edit>
+									<input type="text" [(ngModel)] = "newLocation.type" />
+								</div>
+							</td>
+							<td>
+								<div [hidden] = list.edit>
+									{{list.maskLen}}
+								</div>
+								<div [hidden] = !list.edit>
+									<input type="text" [(ngModel)] = "newLocation.maskLen"/>
+								</div>
+							</td>
+							<td>
+								<div [hidden] = list.edit>
+									{{list.datatype}}
+								</div>
+								<div [hidden] = !list.edit>
+									<input type="text" [(ngModel)] = "newLocation.datatype"/>
+								</div>
+							</td>
+							<td>
+								<div [hidden] = list.edit>
+									{{list.delimiter}}
+								</div>
+								<div [hidden] = !list.edit>
+									<input type="text" [(ngModel)] = "newLocation.delimiter"/>
+								</div>
+							</td>
+							<td class="align-cen">
+								<div [hidden] = list.edit>
+									<span style="cursor:pointer;padding-right:5px;color:#9b9b9b;" (click) = onEdit(i) class="fa fa-edit">
+									</span>
+									<span style="cursor:pointer;color:#9b9b9b;" (click) = onDelete(i) class="fa fa-trash-o">
+									</span>
+								</div>
+								<div [hidden] = !list.edit>
+									<span style="cursor:pointer;padding-right:5px;color:#9b9b9b;" class="fa fa-check" (click) = "onEditDone(i)"></span>
+									<span style="cursor:pointer;color:#9b9b9b;" class="fa fa-ban" (click) = "onEditCancel(i)"></span>
+								</div>
+								
+							</td>
+						</tr>
+						<tr [hidden] = "!showInput">
+							<td><input type="text" [(ngModel)] = "newLocation.type"/></td>
+							<td><input type="text" [(ngModel)] = "newLocation.maskLen"/></td>
+							<td><input type="text" [(ngModel)] = "newLocation.datatype"/></td>
+							<td><input type="text" [(ngModel)] = "newLocation.delimiter"/></td>
+							<td class="align-cen">
+								<span style="cursor:pointer;padding-right:5px;color:#9b9b9b;" class="fa fa-check" (click) = "onDone()"></span>
+								<span style="cursor:pointer;color:#9b9b9b;" class="fa fa-ban" (click) = "onDoneCancel(i)"></span>
+							</td>
+						</tr>						
+					</tbody>
+					
+				</table>
+			</div>
+		</div>
+		<div class="row M0">
+			<div  class=" table-footer col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-sm-2 col-md-2 col-lg-2">
+				<div style="display:inline-block;" [hidden] = "showInput" class="fnt-plus">
+					<span (click) = "onAdd()" style="cursor:pointer;color:#82c7ca;" class="fa fa-plus" ></span>
+				</div>
+				<div *ngIf="locationList.length!=0" style="display:inline-block;padding:10px;" [hidden] = "!filtertext">
+					{{location.length}} records
+
+				</div>
+			</div>
+			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-sm-2 col-md-2 col-lg-2">
+				<div *ngIf="locationList.length!=0" class="page-info">
+				{{currentPage*this.pageSize+1}} - {{(currentPage*pageSize)+pageSize}}
+				/ {{location.length}}
+				</div>
+			</div>
+			<div class="col-sm-1 col-md-1 col-lg-1">
+				<button type="button" class="form-control btn btn-xs btn-default" [disabled] = "currentPage==0" (click) = "onPrev()">
+					<span class="fa fa-long-arrow-left fnt-blue" style="cursor:pointer;color:#82c7ca;">
+					</span>
+					<span>
+						Prev  
+					</span>
+				</button>
+			</div>
+			
+			<div class="col-sm-1 col-md-1 col-lg-1">
+				<button type="button" class="form-control btn btn-xs btn-default" [disabled] = " end >= location.length" (click) = "onNext()">
+					<span>
+						Next  
+					</span>
+					<span class="fa fa-long-arrow-right" style="cursor:pointer;color:#82c7ca;">
+					</span>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

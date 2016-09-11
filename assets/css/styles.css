@@ -1,0 +1,33 @@
+h1 {
+  color: #369;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 250%;
+}
+body {
+  margin: 2em;
+}
+.M0 {
+	margin:0px;
+}
+.align-cen{
+	text-align: center;
+}
+.fnt-plus{
+	font-size:24px;
+}
+.btn-add{
+	color: #fff;
+    background-color: #0275d8;
+    border-color: #0275d8;
+}
+.page-info{
+  border: 1px solid #CCCCCC;
+  border-radius: 20px;
+  padding: 5px;
+  text-align: center;
+  color: #000000;
+  font-size: 16px;
+}
+.fnt-blue{
+  color:#82c7ca;
+}
